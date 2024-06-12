@@ -14,19 +14,23 @@ const Home = () => {
           Trending Podcasts
         </h1>
 
-        {
-          podcastData.map(({id,title,description,imgURL}) => {
-            return (
-              <PodcastCard 
-              key={id}
-              PodcastId={id}
-              imgURL={imgURL}
-              title={title}
-              description={description}
-              />
-            );
-          })
-        }
+        <div className='podcast_grid'>
+          {
+            podcastData.map(({ id, title, description, imgURL }) => {
+              return (
+                <PodcastCard
+                  key={id}
+                  PodcastId={id}
+                  imgURL={imgURL}
+                  title={title}
+                  description={description}
+                />
+              );
+            })
+          }
+        </div>
+
+
       </section>
     </div>
   )
