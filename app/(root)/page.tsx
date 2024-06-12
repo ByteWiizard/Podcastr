@@ -1,5 +1,7 @@
 import React from 'react'
 import { Button } from "@/components/ui/button"
+import { podcastData } from '@/constants'
+import PodcastCard from '@/components/PodcastCard'
 
 // reactArrowFunctionExportComponent (rafce)
 
@@ -11,6 +13,20 @@ const Home = () => {
         <h1 className='text-20 font-bold text-white-1'>
           Trending Podcasts
         </h1>
+
+        {
+          podcastData.map(({id,title,description,imgURL}) => {
+            return (
+              <PodcastCard 
+              key={id}
+              PodcastId={id}
+              imgURL={imgURL}
+              title={title}
+              description={description}
+              />
+            );
+          })
+        }
       </section>
     </div>
   )
