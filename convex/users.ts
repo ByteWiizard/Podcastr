@@ -1,4 +1,4 @@
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 import { internalMutation } from "./_generated/server";
 
 export const createUser = internalMutation({
@@ -15,4 +15,61 @@ export const createUser = internalMutation({
             name: args.name,
         })
     }
+})
+
+export const updateUser = internalMutation({
+    args: {
+        clerkId: v.string(),
+        imageUrl: v.string(),
+        email: v.string(),
+    }, handler: async (ctx, args) => {
+        const user = await ctx.db
+            .query('users')
+            .filter((q) => q.eq(q.field("clerkId"), args.clerkId))
+            .unique();
+
+        if (!user) {
+            throw new ConvexError("User not Found")
+        }
+
+        await ctx.db.patch(user._id, {
+            imageUrl: args.imageUrl,
+            email: args.email,
+        })
+
+        const podcasts = await ctx.db
+            .query("podcasts")
+            .filter((q) => q.eq(q.field("authorId"), args.clerkId))
+            .collect();
+
+        await Promise.all(
+            podcasts.map(async (p) => {
+                await ctx.db.patch(p._id, {
+                    authorImageUrl: args.imageUrl
+                })
+            })
+        )
+    }
+})
+
+
+export const deleteUser = internalMutation({
+
+    args:{
+        clerkId: v.string(),
+    },
+    async handler(ctx, args) {
+        
+        const user = await ctx.db
+                        .query("users")
+                        .filter((q) => q.eq(q.field("clerkId"),args.clerkId))
+                        .unique();
+
+        if(!user){
+            throw new ConvexError("User not found")
+        }
+
+
+        await ctx.db.delete(user._id);
+    },
 })
